@@ -14,7 +14,7 @@ export default () => {
   // • Restrict type of `value` to `string OR number`
   // • Fix any resulting errors.
 
-  function doStuff(value: any): void {
+  function doStuff(value: string | number): void {
     if (typeof value === 'string') {
       console.log(value.toUpperCase().split('').join(' '));
     } else if (typeof value === 'number') {
@@ -23,13 +23,13 @@ export default () => {
 
     value; // hover over `value` here
   }
-  
+
   doStuff(2);
   doStuff(22);
   doStuff(222);
   doStuff('hello');
-  doStuff(true);
-  doStuff({});
+  doStuff('true');
+  doStuff('{}');
 
   console.log('[Exercise 5.1]');
 
@@ -38,6 +38,12 @@ export default () => {
   // • Use a type guard to fill out the body of the `padLeft` function.
 
   function padLeft(value: string, padding: number | string): string {
+    if (typeof padding === 'number') {
+      return `${Array(padding + 1).join(' ')}${value}`
+    }
+    else {
+      return padding + value
+    }
     // if padding is a number, return `${Array(padding + 1).join(' ')}${value}`
     // if padding is a string, return padding + value
   }
@@ -57,8 +63,8 @@ export default () => {
 
   const numbers = [1, 2, 3, [44, 55], 6, [77, 88], 9, 10];
 
-  function flatten(array) {
-    const flattened = [];
+  function flatten(array:(number[] | number)[]): number[] {
+    const flattened: number[] = [];
 
     for (const element of array) {
       if (Array.isArray(element)) {
@@ -87,6 +93,7 @@ export default () => {
   //   to swim the and birds to fly.
   // • Add any missing type annotations, being as explicit as possible.
 
+  
   interface EggLayer {
     layEggs(): void;
   }
@@ -101,11 +108,13 @@ export default () => {
   // -----------------------
   // add type alias(es) here
   // type BirdLike = ?
-
+  type BirdLike = Flyer & EggLayer;
+  type FishLike = Swimmer & EggLayer;
+  type Animal = Fish | Bird
   // -----------------------
 
   class Bird implements BirdLike {
-    constructor(public species: string) {}
+    constructor(public species: string) { }
 
     layEggs(): void {
       console.log('Laying bird eggs.');
@@ -117,7 +126,7 @@ export default () => {
   };
 
   class Fish implements FishLike {
-    constructor(public species: string) {}
+    constructor(public species: string) { }
 
     layEggs(): void {
       console.log('Laying fish eggs.');
@@ -140,8 +149,13 @@ export default () => {
   }
 
   function interrogateAnimal(animal = getRandomAnimal()) {
-    animal.swim(10) // call only if it is a fish
-    animal.fly(10); // call only if it is a bird
+    if(animal instanceof Fish){
+      animal.swim(10)     // call only if it is a fish
+    }
+    if(animal instanceof Bird){
+      animal.fly(10); // call only if it is a bird
+    }
+    
 
     return animal.species;
   }
